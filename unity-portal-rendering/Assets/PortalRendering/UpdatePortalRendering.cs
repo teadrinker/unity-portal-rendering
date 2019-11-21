@@ -34,6 +34,12 @@ public class UpdatePortalRendering : MonoBehaviour {
 		//return (matPort.inverse * matDest).MultiplyPoint(pos);
 	}
 
+	void Awake() {
+		// these are not VR cameras!
+		portalRenderCam.stereoTargetEye = StereoTargetEyeMask.None; 
+		exportCam.stereoTargetEye = StereoTargetEyeMask.None; 
+	}
+
 	void Update() {
 
 		portalRenderCam.transform.position = toPortalSpace(portalViewPointSource.transform.position);
