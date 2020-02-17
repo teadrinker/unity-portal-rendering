@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Martin Eklund, Space Plunge, 2020
+// https://github.com/teadrinker/unity-portal-rendering
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +15,7 @@ public class UpdatePortalRendering : MonoBehaviour {
 
 	[Space()]
 
-//	public GameObject portalTransform;
+	public GameObject portalTargetTransform;
 	public GameObject portalViewPointSource;
 	public GameObject portalQuad;
 	public Material realtimeProjectionMat;
@@ -22,21 +25,6 @@ public class UpdatePortalRendering : MonoBehaviour {
 	public Vector2 exportCamAspect = new Vector2(16f, 9f); // 16/9
 
 
-
-	//Matrix4x4 fromPortalSpace() {
-		//var matDest = portalTransform.transform.localToWorldMatrix;
-		//var matPort = transform.localToWorldMatrix;
-
-		//return (matPort.inverse * matDest).inverse;
-	//}
-	Vector3 toPortalSpace(Vector3 pos) {
-		return pos;		
-		//var matDest = portalTransform.transform.localToWorldMatrix;
-		//var matPort = transform.localToWorldMatrix;
-
-		//return (matPort.inverse * matDest).MultiplyPoint(pos);
-	}
-
 	void Awake() {
 		// these are not VR cameras!
 		portalRenderCam.stereoTargetEye = StereoTargetEyeMask.None; 
@@ -45,8 +33,10 @@ public class UpdatePortalRendering : MonoBehaviour {
 
 	void Update() {
 
-		portalRenderCam.transform.position = toPortalSpace(portalViewPointSource.transform.position);
-		portalRenderCam.transform.LookAt( toPortalSpace(portalQuad.transform.position) );
+		// Generate camera parameters as if there was no portalTargetTransform
+		// (portal is just showing what it behind it, so it is "invisible")
+		portalRenderCam.transform.position = portalViewPointSource.transform.position;
+		portalRenderCam.transform.LookAt(portalQuad.transform.position);
 
 		var portalDir = Vector3.back;
 
@@ -62,6 +52,19 @@ public class UpdatePortalRendering : MonoBehaviour {
 		portalQuad.transform.localScale = Vector3.one * portalSize;
 
 		RealtimeUVProjectionTexture(portalRenderCam, realtimeProjectionMat);
+
+		if(portalTargetTransform != null) {
+
+			// now get the transform difference between portal and portal target
+			var portalM = gameObject.transform.localToWorldMatrix; 
+			var portalTargetM = portalTargetTransform.transform.localToWorldMatrix; 
+			var diff = portalTargetM * portalM.inverse;
+
+			// apply transform difference to portal renderer camera
+			var camM = portalRenderCam.transform.localToWorldMatrix; 
+			var newCamM = diff * camM;
+			portalRenderCam.transform.SetPositionAndRotation(newCamM.GetColumn(3), newCamM.rotation);
+		}
 	}
 
 
@@ -70,7 +73,6 @@ public class UpdatePortalRendering : MonoBehaviour {
 			var P = MatrixSource.projectionMatrix;
 			//P = GL.GetGPUProjectionMatrix(P, true);
 			Matrix4x4 V = MatrixSource.worldToCameraMatrix;
-			//V = fromPortalSpace() * V; // this is not correct...
 
 			Matrix4x4 VP = P * V;
 			DestinationMaterial.SetMatrix("_UVProjMatrix", VP);
