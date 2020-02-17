@@ -19,6 +19,9 @@ public class UpdatePortalRendering : MonoBehaviour {
 	public Camera portalRenderCam;
 	public Camera exportCam;
 
+	public Vector2 exportCamAspect = new Vector2(16f, 9f); // 16/9
+
+
 
 	//Matrix4x4 fromPortalSpace() {
 		//var matDest = portalTransform.transform.localToWorldMatrix;
@@ -55,7 +58,7 @@ public class UpdatePortalRendering : MonoBehaviour {
 		var fov = Mathf.Atan2(radius, distanceToPortal) * Mathf.Rad2Deg * 2f;
 
 		portalRenderCam.fieldOfView = fov;
-		exportCam.orthographicSize = portalSize * 0.5f;
+		exportCam.orthographicSize = portalSize * 0.5f * Mathf.Clamp(exportCamAspect.y / exportCamAspect.x, 0f, 1f);
 		portalQuad.transform.localScale = Vector3.one * portalSize;
 
 		RealtimeUVProjectionTexture(portalRenderCam, realtimeProjectionMat);
