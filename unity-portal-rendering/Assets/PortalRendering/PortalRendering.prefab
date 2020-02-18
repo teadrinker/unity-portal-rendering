@@ -152,7 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalSize: 0.4
-  portalSizeMarginPercentage: 30
+  portalSizeMarginPercentage: 75
+  portalTargetTransform: {fileID: 0}
   portalViewPointSource: {fileID: 0}
   portalQuad: {fileID: 1997782404783682}
   realtimeProjectionMat: {fileID: 2100000, guid: ebc17010552835945a4a810e96ef4ca4,
