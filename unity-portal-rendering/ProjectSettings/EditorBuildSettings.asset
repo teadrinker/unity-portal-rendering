@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Example with VR tracking/Example.unity
+    guid: c580f2ddca24fe544bfebc4d43a01713
   m_configObjects: {}
