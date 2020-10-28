@@ -18,7 +18,7 @@ public class CalibrateVR : MonoBehaviour
     void Update()
     {
         var inp = GetComponent<UnityXRInputAdapter>();
-        if(inp.RightTrigger && !_lastRTrigger) {
+        if(inp.RightTrigger && !_lastRTrigger || Input.GetMouseButtonDown(0)) {
             _calibrateStep++;
             stage1.SetActive(false);
             stage2.SetActive(false);
